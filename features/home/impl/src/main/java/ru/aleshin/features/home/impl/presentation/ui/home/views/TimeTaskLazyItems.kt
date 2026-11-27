@@ -1,0 +1,308 @@
+/*
+ * Copyright 2026 Stanislav Aleshin
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ru.aleshin.features.home.impl.presentation.ui.home.views
+
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import ru.aleshin.core.presentation.mappers.mapToIconPainter
+import ru.aleshin.core.presentation.models.tasks.TimeTaskDetailsUi
+import ru.aleshin.core.utils.extensions.duration
+import ru.aleshin.core.utils.functional.Constants
+import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
+import ru.aleshin.timeplanner.core.ui.views.toMinutesOrHoursTitle
+import java.text.SimpleDateFormat
+import java.util.Date
+
+/**
+ * @author Stanislav Aleshin on 24.02.2023.
+ */
+@Composable
+internal fun LazyItemScope.PlannedTimeTaskItem(
+    modifier: Modifier = Modifier,
+    model: TimeTaskDetailsUi,
+    isCompactView: Boolean = true,
+    onEdit: () -> Unit,
+    onToggleStep: (Int) -> Unit = {},
+) {
+    Column(
+        modifier = modifier.padding(top = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            StartTaskTimeTitle(time = model.startTime)
+            LinearProgressIndicator(
+                progress = { 0f },
+                modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.small),
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                strokeCap = StrokeCap.Square,
+                gapSize = 0.dp,
+                drawStopIndicator = {},
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            with(model) {
+                EndTaskTimeTitle(
+                    modifier = Modifier.align(Alignment.Bottom),
+                    isVisible = isCompactView,
+                    time = model.endTime,
+                )
+                PlannedTimeTask(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp).animateContentSize(),
+                    onEditClicked = onEdit,
+                    onToggleStep = onToggleStep,
+                    taskTitle = mainCategory.fetchName() ?: HomeThemeRes.strings.noneTitle,
+                    taskSubTitle = model.subCategory?.name,
+                    taskDurationTitle = duration.toMinutesOrHoursTitle(),
+                    categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
+                    priority = priority,
+                    enabledNotifications = isEnableNotification,
+                    note = note,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+internal fun LazyItemScope.CompletedTimeTaskItem(
+    modifier: Modifier = Modifier,
+    model: TimeTaskDetailsUi,
+    isCompactView: Boolean = true,
+    onEdit: () -> Unit,
+    onDoneChange: () -> Unit,
+    onToggleStep: (Int) -> Unit = {},
+) {
+    Column(
+        modifier = modifier.padding(top = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            StartTaskTimeTitle(time = model.startTime)
+            LinearProgressIndicator(
+                progress = { 1f },
+                modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.small),
+                color = when (model.isCompleted) {
+                    true -> MaterialTheme.colorScheme.tertiary
+                    false -> MaterialTheme.colorScheme.error
+                },
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                strokeCap = StrokeCap.Square,
+                gapSize = 0.dp,
+                drawStopIndicator = {},
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            with(model) {
+                EndTaskTimeTitle(
+                    modifier = Modifier.align(Alignment.Bottom),
+                    isVisible = isCompactView,
+                    time = model.endTime,
+                )
+                CompletedTimeTask(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp).animateContentSize(),
+                    onEditClicked = onEdit,
+                    onDoneChange = onDoneChange,
+                    onToggleStep = onToggleStep,
+                    taskTitle = mainCategory.fetchName() ?: HomeThemeRes.strings.noneTitle,
+                    taskSubTitle = subCategory?.name,
+                    categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
+                    isCompleted = isCompleted,
+                    note = note,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+internal fun LazyItemScope.RunningTimeTaskItem(
+    modifier: Modifier = Modifier,
+    model: TimeTaskDetailsUi,
+    onEdit: () -> Unit,
+    onIncreaseTime: () -> Unit,
+    onReduceTime: () -> Unit,
+    onToggleStep: (Int) -> Unit = {},
+    isCompactView: Boolean = true,
+) {
+    Column(
+        modifier = modifier.fillMaxHeight().padding(top = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            StartTaskTimeTitle(time = model.startTime)
+            Box(modifier = Modifier.padding(vertical = 8.dp).weight(1f)) {
+                LinearProgressIndicator(
+                    progress = { model.progress },
+                    modifier = Modifier.clip(MaterialTheme.shapes.small).fillMaxWidth().animateContentSize(),
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    strokeCap = StrokeCap.Square,
+                    gapSize = 0.dp,
+                    drawStopIndicator = {},
+                )
+            }
+            Text(
+                text = model.leftTime.toMinutesOrHoursTitle(),
+                color = MaterialTheme.colorScheme.primary,
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            with(model) {
+                EndTaskTimeTitle(
+                    modifier = Modifier.align(Alignment.Bottom),
+                    time = model.endTime,
+                    isVisible = isCompactView,
+                )
+                RunningTimeTask(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
+                    onEditClicked = onEdit,
+                    onIncreaseTime = onIncreaseTime,
+                    onReduceTime = onReduceTime,
+                    onToggleStep = onToggleStep,
+                    taskTitle = mainCategory.fetchName() ?: HomeThemeRes.strings.noneTitle,
+                    taskSubTitle = subCategory?.name,
+                    categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
+                    priority = priority,
+                    note = note,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+internal fun LazyItemScope.AddTimeTaskViewItem(
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    onAddClick: () -> Unit,
+    startTime: Date,
+    endTime: Date,
+    indicatorColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+) {
+    Row(
+        modifier = modifier.alpha(if (enabled) 1f else 0.6f),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        StartTaskTimeTitle(time = startTime)
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(modifier = Modifier.padding(vertical = 8.dp).weight(1f)) {
+                    LinearProgressIndicator(
+                        progress = { 0f },
+                        modifier = Modifier.height(4.dp).clip(MaterialTheme.shapes.small).fillMaxWidth(),
+                        trackColor = indicatorColor,
+                        strokeCap = StrokeCap.Square,
+                        gapSize = 0.dp,
+                        drawStopIndicator = {},
+                    )
+                }
+            }
+            if (enabled) {
+                AddTimeTaskView(
+                    showAddIconForFreeTime = startTime >= Date(),
+                    isFreeTime = remember(startTime, endTime) {
+                        duration(startTime, endTime) >= Constants.Date.MILLIS_IN_MINUTE
+                    },
+                    remainingTimeTitle = duration(startTime, endTime).toMinutesOrHoursTitle(),
+                    onViewClicked = onAddClick,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+internal fun StartTaskTimeTitle(
+    modifier: Modifier = Modifier,
+    time: Date,
+    color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+) {
+    val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
+    Text(
+        modifier = modifier.defaultMinSize(minWidth = 42.dp),
+        text = timeFormat.format(time),
+        style = MaterialTheme.typography.titleMedium,
+        color = color,
+    )
+}
+
+@Composable
+internal fun EndTaskTimeTitle(
+    modifier: Modifier = Modifier,
+    isVisible: Boolean,
+    time: Date,
+) {
+    val timeFormat = remember {
+        SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
+    }
+    val alpha by animateFloatAsState(
+        targetValue = if (isVisible) 1f else 0f, 
+        label = "alpha",
+        animationSpec = tween(durationMillis = 220),
+    )
+    Text(
+        modifier = modifier.defaultMinSize(minWidth = 42.dp).alpha(alpha),
+        text = timeFormat.format(time),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.titleMedium,
+    )
+}
+
+@Composable
+internal fun LazyItemScope.EmptyItem(height: Dp = 50.dp) {
+    Spacer(modifier = Modifier.height(height).fillMaxWidth())
+}

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="512dp"
+    android:height="512dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Background Gradient Circle -->
+    <path
+        android:pathData="M256,256m-240,0a240,240 0,1 1,480 0a240,240 0,1 1,-480 0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="0"
+                android:startY="0"
+                android:endX="512"
+                android:endY="512"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FF3B82F6"/>
+                <item android:offset="1.0" android:color="#FF1D4ED8"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Subtle Inner Ring -->
+    <path
+        android:pathData="M256,256m-218,0a218,218 0,1 1,436 0a218,218 0,1 1,-436 0"
+        android:strokeColor="#FFFFFF"
+        android:strokeAlpha="0.15"
+        android:strokeWidth="4"/>
+
+    <!-- 'D' Letter Shape -->
+    <path
+        android:pathData="M168,156 H244 C308,156 352,196 352,256 C352,316 308,356 244,356 H168 Z"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="34"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"/>
+
+    <!-- Checkmark Path with Gradient -->
+    <path
+        android:pathData="M208,260 L246,298 L346,192"
+        android:strokeWidth="34"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:startX="208"
+                android:startY="298"
+                android:endX="346"
+                android:endY="192"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FF34D399"/>
+                <item android:offset="1.0" android:color="#FFA7F3D0"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>

@@ -1,0 +1,80 @@
+/*
+ * Copyright 2026 Stanislav Aleshin
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ru.aleshin.features.settings.impl.presentation.theme.tokens
+
+import androidx.compose.runtime.staticCompositionLocalOf
+import ru.aleshin.features.settings.impl.R
+
+/**
+ * @author Stanislav Aleshin on 23.02.2023.
+ */
+internal data class SettingsIcons(
+    val back: Int,
+    val git: Int,
+    val palette: Int,
+    val colorize: Int,
+    val waterDrop: Int,
+    val translate: Int,
+    val calendar: Int,
+    val lock: Int,
+    val cloudUpload: Int,
+    val cloudDownload: Int,
+    val delete: Int,
+    val info: Int,
+    val chevronRight: Int,
+    val cryptoBitcoin: Int,
+    val cryptoBNB: Int,
+    val cryptoEthereum: Int,
+    val cryptoTron: Int,
+    val cryptoLitecoin: Int,
+    val cryptoECash: Int,
+    val copy: Int,
+    val crypto: Int,
+    val cryptoAvax: Int,
+    val cryptoFtm: Int,
+)
+
+internal val baseSettingIcons = SettingsIcons(
+    back = R.drawable.ic_back,
+    git = R.drawable.ic_github,
+    palette = R.drawable.ic_settings_palette,
+    colorize = R.drawable.ic_settings_colorize,
+    waterDrop = R.drawable.ic_settings_water_drop,
+    translate = R.drawable.ic_settings_translate,
+    calendar = R.drawable.ic_settings_calendar,
+    lock = R.drawable.ic_settings_lock,
+    cloudUpload = R.drawable.ic_settings_cloud_upload,
+    cloudDownload = R.drawable.ic_settings_cloud_download,
+    delete = R.drawable.ic_settings_delete,
+    info = R.drawable.ic_settings_info,
+    chevronRight = R.drawable.ic_settings_chevron_right,
+    cryptoBitcoin = R.drawable.ic_bitcoin,
+    cryptoBNB = R.drawable.ic_bnb,
+    cryptoEthereum = R.drawable.ic_ethereum,
+    cryptoTron = R.drawable.ic_tron,
+    cryptoLitecoin = R.drawable.ic_litecoin,
+    cryptoECash = R.drawable.ic_ecash_xec,
+    cryptoAvax = R.drawable.ic_avax,
+    cryptoFtm = R.drawable.ic_fantom,
+    copy = R.drawable.ic_content_copy,
+    crypto = R.drawable.ic_crypto,
+)
+
+internal val LocalSettingsIcons = staticCompositionLocalOf<SettingsIcons> {
+    error("Settings Icons is not provided")
+}
+
+internal fun fetchSettingsIcons() = baseSettingIcons

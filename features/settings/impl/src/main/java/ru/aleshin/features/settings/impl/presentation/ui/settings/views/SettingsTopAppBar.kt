@@ -1,0 +1,131 @@
+/*
+ * Copyright 2026 Stanislav Aleshin
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ru.aleshin.features.settings.impl.presentation.ui.settings.views
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.views.TopAppBarAction
+import ru.aleshin.timeplanner.core.ui.views.TopAppBarButton
+import ru.aleshin.timeplanner.core.ui.views.TopAppBarMoreActions
+import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
+
+/**
+ * @author Stanislav Aleshin on 20.02.2023.
+ */
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+internal fun SettingsTopAppBar(
+    modifier: Modifier = Modifier,
+    isCompact: Boolean,
+    onResetToDefaultClick: () -> Unit,
+    onBackIconClick: () -> Unit,
+) {
+    TopAppBar(
+        modifier = modifier,
+        title = {
+            TopAppBarTitle(
+                text = SettingsThemeRes.strings.settingsTitle,
+                textAlign = if (isCompact) TextAlign.Center else TextAlign.Start,
+            )
+        },
+        navigationIcon = {
+            TopAppBarButton(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                imageDescription = SettingsThemeRes.strings.backIconDesc,
+                onButtonClick = onBackIconClick,
+            )
+        },
+        actions = {
+            TopAppBarMoreActions(
+                items = SettingsMoreActions.entries.toTypedArray(),
+                moreIconDescription = SettingsThemeRes.strings.moreIconDesc,
+                onItemClick = { action ->
+                    when (action) {
+                        SettingsMoreActions.RESET_TO_DEFAULT -> onResetToDefaultClick.invoke()
+                    }
+                },
+            )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+        ),
+    )
+}
+
+internal enum class SettingsMoreActions : TopAppBarAction {
+    RESET_TO_DEFAULT {
+        override val title: String @Composable get() = SettingsThemeRes.strings.resetToDefaultTitle
+        override val icon: Int @Composable get() = TimePlannerRes.icons.reset
+        override val isAlwaysShow: Boolean = false
+    },
+}
+
+/* ----------------------- Release Preview -----------------------
+@Preview
+@Composable
+internal fun SettingsTopAppBar_Light_Preview() {
+    TimePlannerTheme(
+        dynamicColor = false,
+        themeColorsType = ThemeColorsUiType.LIGHT,
+        language = LanguageUiType.RU,
+    ) {
+        SettingsTheme {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                content = { Box(modifier = Modifier.padding(it)) {} },
+                topBar = {
+                    SettingsTopAppBar(
+                        onResetToDefault = {},
+                        onMenuButtonClick = {},
+                    )
+                },
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+internal fun SettingsTopAppBar_Dark_Preview() {
+    TimePlannerTheme(
+        dynamicColor = false,
+        themeColorsType = ThemeColorsUiType.DARK,
+        language = LanguageUiType.RU,
+    ) {
+        SettingsTheme {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                content = { Box(modifier = Modifier.padding(it)) {} },
+                topBar = {
+                    SettingsTopAppBar(
+                        onResetToDefault = {},
+                        onMenuButtonClick = {},
+                    )
+                },
+            )
+        }
+    }
+}
+*/

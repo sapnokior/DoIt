@@ -1,0 +1,46 @@
+/*
+ * Copyright 2026 Stanislav Aleshin
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ru.aleshin.features.home.impl.presentation.ui.home
+
+import androidx.compose.runtime.Immutable
+import ru.aleshin.timeplanner.core.ui.views.AdaptiveLayoutInfo
+
+/**
+ * @author Stanislav Aleshin on 26.07.2026.
+ */
+@Immutable
+internal enum class HomeLayoutMode {
+    COMPACT,
+    MEDIUM,
+    SUPPORTING_PANE,
+    BOOK,
+    TABLETOP;
+
+    val showScreenTopAppBar: Boolean
+        get() = this != SUPPORTING_PANE && this != BOOK
+
+    val showDateBottomBar: Boolean
+        get() = this == COMPACT || this == MEDIUM
+}
+
+internal fun AdaptiveLayoutInfo.fetchHomeLayoutMode(): HomeLayoutMode = when {
+    isTabletopPosture -> HomeLayoutMode.TABLETOP
+    isBookPosture -> HomeLayoutMode.BOOK
+    isCompactHeight -> if (isCompactWidth) HomeLayoutMode.COMPACT else HomeLayoutMode.MEDIUM
+    isCompactWidth -> HomeLayoutMode.COMPACT
+    isMediumWidth -> HomeLayoutMode.MEDIUM
+    else -> HomeLayoutMode.SUPPORTING_PANE
+}

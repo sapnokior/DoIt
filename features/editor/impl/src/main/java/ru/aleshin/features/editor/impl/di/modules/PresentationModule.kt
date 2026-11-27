@@ -1,0 +1,90 @@
+/*
+ * Copyright 2026 Stanislav Aleshin
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ru.aleshin.features.editor.impl.di.modules
+
+import dagger.Binds
+import dagger.Module
+import ru.aleshin.core.utils.architecture.store.BaseComposeStore
+import ru.aleshin.core.utils.architecture.store.BaseOnlyOutComposeStore
+import ru.aleshin.core.utils.di.FeatureScope
+import ru.aleshin.features.editor.api.EditorContentProviderFactory
+import ru.aleshin.features.editor.impl.navigation.DefaultEditorContentProviderFactory
+import ru.aleshin.features.editor.impl.presentation.ui.categories.contract.CategoriesState
+import ru.aleshin.features.editor.impl.presentation.ui.categories.store.CategoriesComposeStore
+import ru.aleshin.features.editor.impl.presentation.ui.categories.store.CategoriesWorkProcessor
+import ru.aleshin.features.editor.impl.presentation.ui.goal.contract.GoalState
+import ru.aleshin.features.editor.impl.presentation.ui.goal.store.GoalComposeStore
+import ru.aleshin.features.editor.impl.presentation.ui.goal.store.GoalWorkProcessor
+import ru.aleshin.features.editor.impl.presentation.ui.goal.validators.GoalValidator
+import ru.aleshin.features.editor.impl.presentation.ui.task.contract.TaskState
+import ru.aleshin.features.editor.impl.presentation.ui.task.store.EditorWorkProcessor
+import ru.aleshin.features.editor.impl.presentation.ui.task.store.TaskComposeStore
+import ru.aleshin.features.editor.impl.presentation.ui.task.store.TimeTaskWorkProcessor
+import ru.aleshin.features.editor.impl.presentation.ui.task.validators.CategoryValidator
+import ru.aleshin.features.editor.impl.presentation.ui.task.validators.TimeRangeValidator
+
+/**
+ * @author Stanislav Aleshin on 08.03.2023.
+ */
+@Module
+internal interface PresentationModule {
+
+    @Binds
+    @FeatureScope
+    fun bindGoalStoreFactory(
+        factory: GoalComposeStore.Factory,
+    ): BaseComposeStore.Factory<GoalComposeStore, GoalState>
+
+    @Binds
+    @FeatureScope
+    fun bindGoalWorkProcessor(processor: GoalWorkProcessor.Base): GoalWorkProcessor
+
+    @Binds
+    @FeatureScope
+    fun bindGoalValidator(validator: GoalValidator.Base): GoalValidator
+
+    @Binds
+    @FeatureScope
+    fun bindEditorContentProviderFactory(factory: DefaultEditorContentProviderFactory): EditorContentProviderFactory
+
+    @Binds
+    @FeatureScope
+    fun bindEditorStoreFactory(factory: TaskComposeStore.Factory): BaseComposeStore.Factory<TaskComposeStore, TaskState>
+
+    @Binds
+    @FeatureScope
+    fun bindCategoriesStoreFactory(factory: CategoriesComposeStore.Factory): BaseOnlyOutComposeStore.Factory<CategoriesComposeStore, CategoriesState>
+
+    @Binds
+    @FeatureScope
+    fun bindCategoriesWorkProcessor(processor: CategoriesWorkProcessor.Base): CategoriesWorkProcessor
+
+    @Binds
+    @FeatureScope
+    fun bindTimeTaskWorkProcessor(processor: TimeTaskWorkProcessor.Base): TimeTaskWorkProcessor
+
+    @Binds
+    @FeatureScope
+    fun bindEditorWorkProcessor(processor: EditorWorkProcessor.Base): EditorWorkProcessor
+
+    @Binds
+    @FeatureScope
+    fun bindTimeRangeValidator(validator: TimeRangeValidator.Base): TimeRangeValidator
+
+    @Binds
+    @FeatureScope
+    fun bindCategoryValidator(validator: CategoryValidator.Base): CategoryValidator
+}
